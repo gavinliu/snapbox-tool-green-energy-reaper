@@ -1,0 +1,8 @@
+{
+  "expo": {
+    "name": "Green Energy Reaper",
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}

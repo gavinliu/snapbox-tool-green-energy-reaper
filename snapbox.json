@@ -1,0 +1,8 @@
+{
+  "tool": {
+    "name": "Green Energy Reaper",
+    "description": "A great tool built with Snapbox",
+    "primaryColor": "#4CAF50",
+    "icon": "MaterialDesignIcons:package-variant-closed"
+  }
+}
