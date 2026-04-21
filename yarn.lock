@@ -1940,10 +1940,10 @@
   dependencies:
     "@sinonjs/commons" "^3.0.0"
 
-"@snapbox/cli@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@snapbox/cli/-/cli-1.0.1.tgz#ab6c98bdcf4d020b54692d5dda2716b0b5b89eac"
-  integrity sha512-VPQBgqIi/21qVqnKXJ186tQo+ui9IpXiyrYOZ2V88/id2iOQ+rdM0g1whXebQUSC5KP+xNcegj/b0fTnmHADkQ==
+"@snapbox/cli@1.0.3":
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/@snapbox/cli/-/cli-1.0.3.tgz#4501d022860b82c64c04f6db61b05407ac059679"
+  integrity sha512-RTN+tkhCJtxztRcjBb2+p0RjSJUmUQARQiExDKPpzZdCOymq0TjUr4405ut3dUNadg1dwaB+FoJTU3uQTHIwNQ==
   dependencies:
     archiver "^7.0.1"
     chalk "^4.1.2"
@@ -1962,6 +1962,26 @@
   integrity sha512-YTdGfcuRimVJ7eUBZO+q+ouxHDj+QsjJ3zJn2bM85jqr820yGeIi8J7c7p7OZANpH2ewqWL8T8kHAxPrW428Jw==
   dependencies:
     "@expo/metro-config" "^55.0.9"
+
+"@snapbox/pkg-computer-vision@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@snapbox/pkg-computer-vision/-/pkg-computer-vision-1.0.1.tgz#40f0625d4999f8e4d4ba48c126d66a6a81f51890"
+  integrity sha512-6SANGeTl5zxB5np1YGEkouvDZq+nR+yM67bebrwtu07OJWQO442GxCDl0YjoEW0ILsnInCT0Okgk2ol4x+Gs3Q==
+
+"@snapbox/pkg-floating-menu@1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@snapbox/pkg-floating-menu/-/pkg-floating-menu-1.0.2.tgz#4b580a4d17cf1d354122b3edf046ef10002b6e2e"
+  integrity sha512-rkp4xT5NAWlWdIKGAxASVHHnewM6zlZDqfHTPrOQf4UdRdcesKWDNWQI1gFBNCfZvo0pwlv1M/umae5Rhx1H2g==
+
+"@snapbox/pkg-screen-clicker@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@snapbox/pkg-screen-clicker/-/pkg-screen-clicker-1.0.1.tgz#39840337af62fe35968a0c23789d311ec33ef75e"
+  integrity sha512-4bvgxYdsrqJHTXlE17AYkCBkxm5mILTnyEn1kflWd9cZ1ovBtl9rVzRgcazEO/z8lmYMzb/3EY14qYTyXAvpvw==
+
+"@snapbox/pkg-screen-recorder@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@snapbox/pkg-screen-recorder/-/pkg-screen-recorder-1.0.1.tgz#3d1d5305604b974786a4c0bb18b10e3cd9dacb03"
+  integrity sha512-kmGSBQg5UIUSddMWE4s6LCjQz66NdhqZMmPftQAj94dwmaNpWJgHdqt71uVLwlJ+2I0chHIkJO8Oc/UFq6lgEw==
 
 "@snapbox/pkg-ui@1.0.1":
   version "1.0.1"
@@ -3377,6 +3397,11 @@ expo-constants@~55.0.14:
   dependencies:
     "@expo/config" "~55.0.15"
     "@expo/env" "~2.1.1"
+
+expo-document-picker@~55.0.13:
+  version "55.0.13"
+  resolved "https://registry.yarnpkg.com/expo-document-picker/-/expo-document-picker-55.0.13.tgz#f580ea88252c3608d23be1cd3fb0c5a08c0898e2"
+  integrity sha512-IhswJElhdzs3fKDEKW8KXYRoFkWGEsXRMYAZT46Yo56zqqy8yQXrczo33RSwD2hFzNQBdLT97SJL9N311UyS3g==
 
 expo-file-system@~55.0.16:
   version "55.0.16"

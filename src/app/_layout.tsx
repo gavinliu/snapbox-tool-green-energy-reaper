@@ -32,13 +32,13 @@ export default function Layout() {
           <Stack.Screen
             name="index"
             options={{
-              title: "Counter",
+              title: "绿色能量收割机",
             }}
           />
           <Stack.Screen
             name="settings"
             options={{
-              title: "Settings",
+              title: "设置",
               presentation: "modal",
             }}
           />
