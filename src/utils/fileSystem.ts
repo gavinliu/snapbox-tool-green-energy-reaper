@@ -1,7 +1,6 @@
-import * as FileSystem from 'expo-file-system/legacy';
+import * as FileSystem from "expo-file-system/legacy";
 
 export async function ensureDir(path: string): Promise<void> {
-  console.log("ensureDir", path);
   const dirInfo = await FileSystem.getInfoAsync(path);
   if (!dirInfo.exists) {
     await FileSystem.makeDirectoryAsync(path, { intermediates: true });
@@ -12,7 +11,6 @@ export async function saveFile(
   sourceUri: string,
   destPath: string,
 ): Promise<string> {
-  console.log("saveFile", sourceUri, destPath);
   const dirPath = destPath.substring(0, destPath.lastIndexOf("/"));
   await ensureDir(dirPath);
 
@@ -44,7 +42,7 @@ export async function cleanupOldFiles(
       const filePath = `${directory}${file}`;
       const info = await FileSystem.getInfoAsync(filePath);
 
-      if (info.exists && 'modificationTime' in info) {
+      if (info.exists && "modificationTime" in info) {
         const age = Date.now() - (info.modificationTime || 0);
         if (age > maxAge) {
           await FileSystem.deleteAsync(filePath);

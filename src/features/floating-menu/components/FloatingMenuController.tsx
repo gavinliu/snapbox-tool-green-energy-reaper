@@ -14,6 +14,10 @@ export class FloatingMenuController {
     this.updateMenuState();
     FloatingMenu.show([
       {
+        title: '准备就绪',
+        onPress: () => {}, // 状态显示项，不可操作
+      },
+      {
         title: this.isCollecting ? '停止采集' : '开始采集',
         onPress: () => {
           if (this.isCollecting) {
@@ -22,13 +26,6 @@ export class FloatingMenuController {
             this.onStart();
           }
           this.updateMenuState();
-        },
-      },
-      {
-        title: '关闭菜单',
-        onPress: () => {
-          FloatingMenu.hide();
-          useFloatingMenuStore.getState().hideMenu();
         },
       },
     ]);
@@ -47,13 +44,13 @@ export class FloatingMenuController {
   updateMenuItems(currentOperation: string | null): void {
     this.updateMenuState();
 
-    const title = currentOperation
-      ? `${currentOperation} - ${this.isCollecting ? '停止' : '开始'}`
-      : (this.isCollecting ? '停止采集' : '开始采集');
-
-    FloatingMenu.show([
+    const items = [
       {
-        title,
+        title: currentOperation || '准备就绪',
+        onPress: () => {}, // 状态显示项，不可操作
+      },
+      {
+        title: this.isCollecting ? '停止采集' : '开始采集',
         onPress: () => {
           if (this.isCollecting) {
             this.onStop();
@@ -63,13 +60,8 @@ export class FloatingMenuController {
           this.updateMenuState();
         },
       },
-      {
-        title: '关闭菜单',
-        onPress: () => {
-          FloatingMenu.hide();
-          useFloatingMenuStore.getState().hideMenu();
-        },
-      },
-    ]);
+    ];
+
+    FloatingMenu.show(items);
   }
 }

@@ -19,14 +19,15 @@ export function CollectionFab() {
     (state) => state.findEnergyButtonTemplate,
   );
   const isConfigComplete = useConfigStore((state) => state.isConfigComplete);
-
   const isCollecting = useCollectorStore((state) => state.isCollecting);
+
   const startCollection = useCollectorStore((state) => state.startCollection);
   const stopCollection = useCollectorStore((state) => state.stopCollection);
   const setCurrentOperation = useCollectorStore(
     (state) => state.setCurrentOperation,
   );
 
+  const engineRef = useRef<CollectionEngine | null>(null);
   const menuControllerRef = useRef<FloatingMenuController | null>(null);
 
   const handleStartCollection = async () => {
@@ -43,9 +44,7 @@ export function CollectionFab() {
       matchingThreshold: 0.8,
       operationDelay: 3000,
     };
-
     const matcher = new TemplateMatcher(config);
-
     const engine = new CollectionEngine(
       config,
       matcher,
@@ -59,6 +58,7 @@ export function CollectionFab() {
         menuControllerRef.current?.hideMenu();
       },
     );
+    engineRef.current = engine;
 
     try {
       // 先初始化录屏

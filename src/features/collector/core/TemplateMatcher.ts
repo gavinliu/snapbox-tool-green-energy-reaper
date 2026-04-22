@@ -6,17 +6,11 @@ export default class TemplateMatcher {
   constructor(private config: CollectionConfig) {}
 
   async findCollectButton(screenPath: string): Promise<MatchResult | null> {
-    console.log(
-      `findCollectButton screenPath: ${screenPath}`,
-      this.config.collectButtonTemplate,
-      this.config.matchingThreshold,
-    );
     const results = await ComputerVision.findImage(
       screenPath,
       this.config.collectButtonTemplate,
       this.config.matchingThreshold,
     );
-    console.log(`findCollectButton results: ${results}`);
 
     return this.getBestMatch(results);
   }

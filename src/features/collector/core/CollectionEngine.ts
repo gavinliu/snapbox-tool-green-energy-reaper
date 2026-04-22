@@ -1,14 +1,12 @@
 import * as ScreenClicker from "@snapbox/pkg-screen-clicker";
 import * as ScreenRecorder from "@snapbox/pkg-screen-recorder";
-import type { CollectionConfig, CollectionReport } from "../types";
 import { sleep } from "@snapbox/pkg-timer";
+import type { CollectionConfig, CollectionReport } from "../types";
 import TemplateMatcher from "./TemplateMatcher";
 
 export default class CollectionEngine {
   private collecting = false;
   private recording = false;
-  private collectFailCount = 0;
-  private readonly MAX_COLLECT_FAILURES = 3;
 
   private statistics = {
     totalCollected: 0,
@@ -44,41 +42,29 @@ export default class CollectionEngine {
     }
 
     this.collecting = true;
-    this.collectFailCount = 0;
 
     try {
       while (this.collecting) {
-        this.onProgress("正在采集好友能量...");
-
         // 1. 尝试采集当前好友
+        this.onProgress("正在采集好友能量...");
+        await sleep(this.config.operationDelay);
         const collectSuccess = await this.tryCollectEnergy();
         if (collectSuccess) {
           this.statistics.successCount++;
-          this.collectFailCount = 0;
-        } else {
-          this.collectFailCount++;
-
-          if (this.collectFailCount >= this.MAX_COLLECT_FAILURES) {
-            // 连续失败3次，跳过当前好友
-            this.onProgress("无法采集，跳过当前好友...");
-            await this.tryFindNextFriend();
-            this.statistics.totalCollected++;
-            this.statistics.failCount++;
-            this.collectFailCount = 0;
-            continue;
-          }
         }
 
-        // 等待3秒
-        await sleep(this.config.operationDelay);
+        // 检查是否停止采集
+        if (!this.collecting) {
+          break;
+        }
 
         // 2. 查找下一个好友
         this.onProgress("正在查找下一个好友...");
+        await sleep(this.config.operationDelay);
         const hasNextFriend = await this.tryFindNextFriend();
 
         if (hasNextFriend) {
           this.statistics.totalCollected++;
-          await sleep(this.config.operationDelay);
         } else {
           // 没有更多好友，结束采集
           this.onProgress("采集完成！");
@@ -105,9 +91,7 @@ export default class CollectionEngine {
 
   private async tryCollectEnergy(): Promise<boolean> {
     const screenPath = await ScreenRecorder.captureScreen();
-    console.log(`采集好友能量，截图路径: ${screenPath}`);
     const result = await this.matcher.findCollectButton(screenPath);
-    console.log(`采集好友能量结果: ${result}`);
 
     if (result) {
       const centerX = result.x + result.width / 2;

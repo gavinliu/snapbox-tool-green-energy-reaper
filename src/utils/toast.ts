@@ -1,11 +1,16 @@
-import { Platform, ToastAndroid } from 'react-native';
+import { Platform, ToastAndroid } from "react-native";
 
-export function showToast(message: string, duration: 'short' | 'long' = 'short'): void {
-  if (Platform.OS === 'android') {
-    ToastAndroid.show(message, duration === 'long' ? ToastAndroid.LONG : ToastAndroid.SHORT);
+export function showToast(
+  message: string,
+  duration: "short" | "long" = "short",
+): void {
+  if (Platform.OS === "android") {
+    ToastAndroid.show(
+      message,
+      duration === "long" ? ToastAndroid.LONG : ToastAndroid.SHORT,
+    );
   } else {
-    // iOS可以通过其他方式实现，或者使用第三方库
-    console.log('[Toast]', message);
+    console.log("[Toast]", message);
   }
 }
 
@@ -14,7 +19,7 @@ export function showSuccessToast(message: string): void {
 }
 
 export function showErrorToast(message: string): void {
-  showToast(`✗ ${message}`, 'long');
+  showToast(`✗ ${message}`, "long");
 }
 
 export function showInfoToast(message: string): void {
