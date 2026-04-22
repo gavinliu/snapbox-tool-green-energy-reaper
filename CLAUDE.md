@@ -26,3 +26,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - TypeScript path alias `@/*` resolves to `src/*`.
 - Jest uses the `jest-expo` preset with no extra custom configuration, so new tests should fit Expo/Jest defaults unless there is a clear need to extend config.
 - Expo config is minimal in `app.json`; the only registered plugin today is `expo-router`.
+
+## Snapbox packages
+
+- @snapbox/pkg-computer-vision - 提供计算视觉功能，模版匹配、相识度计算
+- @snapbox/pkg-floating-menu - 提供悬浮菜单功能
+- @snapbox/pkg-screen-clicker - 提供屏幕点击功能
+- @snapbox/pkg-screen-recorder - 提供屏幕录制功能，支持截图

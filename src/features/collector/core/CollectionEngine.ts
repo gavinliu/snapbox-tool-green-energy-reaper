@@ -1,12 +1,12 @@
-import * as ScreenRecorder from '@snapbox/pkg-screen-recorder';
-import * as ScreenClicker from '@snapbox/pkg-screen-clicker';
-import type { MatchResult } from '@snapbox/pkg-computer-vision';
-import TemplateMatcher from './TemplateMatcher';
-import { delay } from '../utils/delay';
-import type { CollectionConfig, CollectionReport } from '../types';
+import * as ScreenClicker from "@snapbox/pkg-screen-clicker";
+import * as ScreenRecorder from "@snapbox/pkg-screen-recorder";
+import type { CollectionConfig, CollectionReport } from "../types";
+import { delay } from "../utils/delay";
+import TemplateMatcher from "./TemplateMatcher";
 
 export default class CollectionEngine {
   private collecting = false;
+  private recording = false;
   private collectFailCount = 0;
   private readonly MAX_COLLECT_FAILURES = 3;
 
@@ -20,16 +20,35 @@ export default class CollectionEngine {
     private config: CollectionConfig,
     private matcher: TemplateMatcher,
     private onProgress: (status: string) => void,
-    private onComplete: (report: CollectionReport) => void
+    private onComplete: (report: CollectionReport) => void,
   ) {}
 
+  async initialize(): Promise<void> {
+    if (this.recording) {
+      return;
+    }
+
+    try {
+      await ScreenRecorder.startRecording();
+      this.recording = true;
+    } catch (error) {
+      console.error("启动录屏失败:", error);
+      throw new Error(`启动录屏失败: ${error}`);
+    }
+  }
+
   async start(): Promise<void> {
+    if (!this.recording) {
+      this.onProgress("请先初始化录屏");
+      throw new Error("请先初始化录屏");
+    }
+
     this.collecting = true;
     this.collectFailCount = 0;
 
     try {
       while (this.collecting) {
-        this.onProgress('正在采集好友能量...');
+        this.onProgress("正在采集好友能量...");
 
         // 1. 尝试采集当前好友
         const collectSuccess = await this.tryCollectEnergy();
@@ -41,7 +60,7 @@ export default class CollectionEngine {
 
           if (this.collectFailCount >= this.MAX_COLLECT_FAILURES) {
             // 连续失败3次，跳过当前好友
-            this.onProgress('无法采集，跳过当前好友...');
+            this.onProgress("无法采集，跳过当前好友...");
             await this.tryFindNextFriend();
             this.statistics.totalCollected++;
             this.statistics.failCount++;
@@ -54,7 +73,7 @@ export default class CollectionEngine {
         await delay(this.config.operationDelay);
 
         // 2. 查找下一个好友
-        this.onProgress('正在查找下一个好友...');
+        this.onProgress("正在查找下一个好友...");
         const hasNextFriend = await this.tryFindNextFriend();
 
         if (hasNextFriend) {
@@ -62,15 +81,18 @@ export default class CollectionEngine {
           await delay(this.config.operationDelay);
         } else {
           // 没有更多好友，结束采集
-          this.onProgress('采集完成！');
+          this.onProgress("采集完成！");
           break;
         }
       }
     } catch (error) {
-      console.error('采集过程出错:', error);
+      console.error("采集过程出错:", error);
       this.onProgress(`采集出错: ${error}`);
     } finally {
       this.collecting = false;
+      // 停止录屏
+      await ScreenRecorder.stopRecording();
+      this.recording = false;
       const report = this.generateReport();
       this.onComplete(report);
     }
@@ -78,12 +100,14 @@ export default class CollectionEngine {
 
   stop(): void {
     this.collecting = false;
-    this.onProgress('正在停止采集...');
+    this.onProgress("正在停止采集...");
   }
 
   private async tryCollectEnergy(): Promise<boolean> {
     const screenPath = await ScreenRecorder.captureScreen();
+    console.log(`采集好友能量，截图路径: ${screenPath}`);
     const result = await this.matcher.findCollectButton(screenPath);
+    console.log(`采集好友能量结果: ${result}`);
 
     if (result) {
       const centerX = result.x + result.width / 2;
@@ -110,7 +134,9 @@ export default class CollectionEngine {
   }
 
   private generateReport(): CollectionReport {
-    const startTime = Date.now() - (this.statistics.totalCollected * this.config.operationDelay * 2);
+    const startTime =
+      Date.now() -
+      this.statistics.totalCollected * this.config.operationDelay * 2;
     const endTime = Date.now();
     const duration = endTime - startTime;
 
@@ -119,7 +145,7 @@ export default class CollectionEngine {
       totalFriends: this.statistics.totalCollected,
       successRate: this.formatSuccessRate(),
       averageTime: this.formatAverageTime(duration),
-      timestamp: new Date().toLocaleString('zh-CN'),
+      timestamp: new Date().toLocaleString("zh-CN"),
     };
   }
 
@@ -135,13 +161,14 @@ export default class CollectionEngine {
   }
 
   private formatSuccessRate(): string {
-    if (this.statistics.totalCollected === 0) return '0.0%';
-    const rate = (this.statistics.successCount / this.statistics.totalCollected) * 100;
+    if (this.statistics.totalCollected === 0) return "0.0%";
+    const rate =
+      (this.statistics.successCount / this.statistics.totalCollected) * 100;
     return `${rate.toFixed(1)}%`;
   }
 
   private formatAverageTime(totalDuration: number): string {
-    if (this.statistics.totalCollected === 0) return '0.0秒';
+    if (this.statistics.totalCollected === 0) return "0.0秒";
     const avgMs = totalDuration / this.statistics.totalCollected;
     return `${(avgMs / 1000).toFixed(1)}秒`;
   }

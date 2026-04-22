@@ -1,28 +1,28 @@
-import { View, StyleSheet } from 'react-native';
-import { Appbar, Card, Avatar, Button, Text } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as FloatingMenu from '@snapbox/pkg-floating-menu';
-import * as ScreenClicker from '@snapbox/pkg-screen-clicker';
-import { useConfigStore } from '../../config/store/useConfigStore';
-import { CollectionFab } from '../components/CollectionFab';
+import * as FloatingMenu from "@snapbox/pkg-floating-menu";
+import * as ScreenClicker from "@snapbox/pkg-screen-clicker";
+import { useRouter } from "expo-router";
+import { StyleSheet, View } from "react-native";
+import { Avatar, Button, Card, Text } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useConfigStore } from "../../config/store/useConfigStore";
+import { CollectionFab } from "../components/CollectionFab";
 
 export function HomeScreen() {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
+  const router = useRouter();
 
   const isConfigComplete = useConfigStore((state) => state.isConfigComplete);
 
-  const [overlayStatus, requestOverlayPermission] = FloatingMenu.useOverlayPermissions();
-  const [screenClickerStatus, requestScreenClickerPermission] = ScreenClicker.useScreenClickerPermissions();
+  const [overlayStatus, requestOverlayPermission] =
+    FloatingMenu.useOverlayPermissions();
+  const [screenClickerStatus, requestScreenClickerPermission] =
+    ScreenClicker.useScreenClickerPermissions();
 
   return (
     <View style={styles.root}>
-      <Appbar.Header>
-        <Appbar.Content title="绿色能量收割机" />
-      </Appbar.Header>
-
-      <View style={{ ...styles.listContainer, marginBottom: insets.bottom + 80 }}>
+      <View
+        style={{ ...styles.listContainer, marginBottom: insets.bottom + 80 }}
+      >
         <Card mode="contained">
           <Card.Title
             title="悬浮窗权限"
@@ -76,7 +76,10 @@ export function HomeScreen() {
             title="配置"
             subtitle={isConfigComplete ? "配置已完成" : "设置按钮模板图片"}
             left={(props) => (
-              <Avatar.Icon {...props} icon={isConfigComplete ? "check-circle" : "cog"} />
+              <Avatar.Icon
+                {...props}
+                icon={isConfigComplete ? "check-circle" : "cog"}
+              />
             )}
           />
           <Card.Content style={styles.cardContent}>
@@ -84,7 +87,7 @@ export function HomeScreen() {
               <Button
                 icon="pencil"
                 mode="outlined"
-                onPress={() => navigation.navigate('config' as never)}
+                onPress={() => router.push("/config")}
               >
                 编辑配置
               </Button>
@@ -92,7 +95,7 @@ export function HomeScreen() {
               <Button
                 icon="plus"
                 mode="contained"
-                onPress={() => navigation.navigate('config' as never)}
+                onPress={() => router.push("/config")}
               >
                 开始配置
               </Button>
@@ -134,7 +137,7 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   cardContent: {
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
     gap: 8,
   },
 });

@@ -1,4 +1,4 @@
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from "expo-file-system";
 
 export interface ConfigState {
   collectButtonTemplate: string | null;
@@ -16,6 +16,6 @@ export interface ConfigActions {
 
 export type ConfigStore = ConfigState & ConfigActions;
 
-export const TEMPLATE_DIR = `${FileSystem.documentDirectory}templates/`;
-export const COLLECT_TEMPLATE_NAME = 'collect_button_template.png';
-export const FIND_ENERGY_TEMPLATE_NAME = 'find_energy_button_template.png';
+export const TEMPLATE_DIR = `${FileSystem.Paths.document.uri}templates/`;
+export const COLLECT_TEMPLATE_NAME = "collect_button_template.png";
+export const FIND_ENERGY_TEMPLATE_NAME = "find_energy_button_template.png";

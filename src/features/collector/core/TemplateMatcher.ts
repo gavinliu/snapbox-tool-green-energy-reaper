@@ -1,16 +1,22 @@
-import ComputerVision from '@snapbox/pkg-computer-vision';
-import type { MatchResult } from '@snapbox/pkg-computer-vision';
-import type { CollectionConfig } from '../types';
+import type { MatchResult } from "@snapbox/pkg-computer-vision";
+import ComputerVision from "@snapbox/pkg-computer-vision";
+import type { CollectionConfig } from "../types";
 
 export default class TemplateMatcher {
   constructor(private config: CollectionConfig) {}
 
   async findCollectButton(screenPath: string): Promise<MatchResult | null> {
+    console.log(
+      `findCollectButton screenPath: ${screenPath}`,
+      this.config.collectButtonTemplate,
+      this.config.matchingThreshold,
+    );
     const results = await ComputerVision.findImage(
       screenPath,
       this.config.collectButtonTemplate,
-      this.config.matchingThreshold
+      this.config.matchingThreshold,
     );
+    console.log(`findCollectButton results: ${results}`);
 
     return this.getBestMatch(results);
   }
@@ -19,7 +25,7 @@ export default class TemplateMatcher {
     const results = await ComputerVision.findImage(
       screenPath,
       this.config.findEnergyTemplate,
-      this.config.matchingThreshold
+      this.config.matchingThreshold,
     );
 
     return this.getBestMatch(results);

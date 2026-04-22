@@ -49,12 +49,6 @@ export default function Layout() {
               presentation: "modal",
             }}
           />
-          <Stack.Screen
-            name="statistics"
-            options={{
-              title: "采集统计",
-            }}
-          />
         </Stack>
       </ThemeProvider>
     </PaperProvider>
