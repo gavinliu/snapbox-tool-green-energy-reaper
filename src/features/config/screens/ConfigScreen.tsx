@@ -8,9 +8,8 @@ import { Button, Text } from "react-native-paper";
 import { TemplatePicker } from "../components/TemplatePicker";
 import { useConfigStore } from "../store/useConfigStore";
 import {
-  COLLECT_TEMPLATE_NAME,
-  FIND_ENERGY_TEMPLATE_NAME,
-  TEMPLATE_DIR,
+  COLLECT_TEMPLATE_FILE_PATH,
+  FIND_ENERGY_TEMPLATE_FILE_PATH,
 } from "../types";
 
 export function ConfigScreen() {
@@ -31,10 +30,7 @@ export function ConfigScreen() {
 
       if (!result.canceled && result.assets[0]) {
         const uri = result.assets[0].uri;
-        const savedPath = await saveFile(
-          uri,
-          `${TEMPLATE_DIR}${COLLECT_TEMPLATE_NAME}`,
-        );
+        const savedPath = await saveFile(uri, COLLECT_TEMPLATE_FILE_PATH);
         setCollectTemplate(savedPath);
         showSuccessToast("采集按钮模板已保存");
       }
@@ -53,10 +49,7 @@ export function ConfigScreen() {
 
       if (!result.canceled && result.assets[0]) {
         const uri = result.assets[0].uri;
-        const savedPath = await saveFile(
-          uri,
-          `${TEMPLATE_DIR}${FIND_ENERGY_TEMPLATE_NAME}`,
-        );
+        const savedPath = await saveFile(uri, FIND_ENERGY_TEMPLATE_FILE_PATH);
         setFindEnergyTemplate(savedPath);
         showSuccessToast("找能量按钮模板已保存");
       }
@@ -131,7 +124,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    padding: 16,
+    paddingHorizontal: 16,
   },
   sectionTitle: {
     marginVertical: 16,

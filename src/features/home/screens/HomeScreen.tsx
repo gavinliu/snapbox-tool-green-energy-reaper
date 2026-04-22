@@ -74,22 +74,13 @@ export function HomeScreen() {
         <Card mode="contained">
           <Card.Title
             title="配置"
-            subtitle={isConfigComplete ? "配置已完成" : "设置按钮模板图片"}
-            left={(props) => (
-              <Avatar.Icon
-                {...props}
-                icon={isConfigComplete ? "check-circle" : "cog"}
-              />
-            )}
+            subtitle={"通过模板匹配图，在屏幕中查找点击位置"}
+            left={(props) => <Avatar.Icon {...props} icon={"cog"} />}
           />
           <Card.Content style={styles.cardContent}>
             {isConfigComplete ? (
-              <Button
-                icon="pencil"
-                mode="outlined"
-                onPress={() => router.push("/config")}
-              >
-                编辑配置
+              <Button icon="check" onPress={() => router.push("/config")}>
+                已配置
               </Button>
             ) : (
               <Button

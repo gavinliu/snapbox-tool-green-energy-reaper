@@ -19,3 +19,6 @@ export type ConfigStore = ConfigState & ConfigActions;
 export const TEMPLATE_DIR = `${FileSystem.Paths.document.uri}templates/`;
 export const COLLECT_TEMPLATE_NAME = "collect_button_template.png";
 export const FIND_ENERGY_TEMPLATE_NAME = "find_energy_button_template.png";
+
+export const COLLECT_TEMPLATE_FILE_PATH = `${TEMPLATE_DIR}${COLLECT_TEMPLATE_NAME}`;
+export const FIND_ENERGY_TEMPLATE_FILE_PATH = `${TEMPLATE_DIR}${FIND_ENERGY_TEMPLATE_NAME}`;

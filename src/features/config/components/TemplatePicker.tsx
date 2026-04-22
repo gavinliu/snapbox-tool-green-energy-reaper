@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Image, StyleSheet } from 'react-native';
-import { Button, Card } from 'react-native-paper';
+import React from "react";
+import { Image, StyleSheet, View } from "react-native";
+import { Button, Card } from "react-native-paper";
 
 interface TemplatePickerProps {
   title: string;
@@ -52,11 +52,9 @@ export function TemplatePicker({
 
 const styles = StyleSheet.create({
   preview: {
-    width: '100%',
-    height: 200,
-    marginBottom: 16,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 8,
+    width: "100%",
+    height: 56,
+    marginBottom: 8,
   },
   button: {
     marginTop: 8,

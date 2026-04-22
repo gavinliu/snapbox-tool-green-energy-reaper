@@ -1,91 +1,120 @@
 import * as ScreenClicker from "@snapbox/pkg-screen-clicker";
 import * as ScreenRecorder from "@snapbox/pkg-screen-recorder";
 import { sleep } from "@snapbox/pkg-timer";
-import type { CollectionConfig, CollectionReport } from "../types";
+import { FloatingMenuController } from "../components/FloatingMenuController";
+import { useCollectorStore } from "../store/useCollectorStore";
+import type { CollectionStatus, RecordStatus } from "../types";
 import TemplateMatcher from "./TemplateMatcher";
 
-export default class CollectionEngine {
-  private collecting = false;
-  private recording = false;
+class CollectionEngine {
+  private menuController: FloatingMenuController | null = null;
+  private matcher: TemplateMatcher = new TemplateMatcher();
+  private recordStatus: RecordStatus = "idle";
+  private collectionStatus: CollectionStatus = "idle";
 
-  private statistics = {
-    totalCollected: 0,
-    successCount: 0,
-    failCount: 0,
-  };
+  constructor() {
+    this.recordStatus = "idle";
+    this.collectionStatus = "idle";
+    this.menuController = new FloatingMenuController(
+      () => this.start(), // 开始采集 loop
+      () => this.stop(), // 停止采集 loop
+    );
+  }
 
-  constructor(
-    private config: CollectionConfig,
-    private matcher: TemplateMatcher,
-    private onProgress: (status: string) => void,
-    private onComplete: (report: CollectionReport) => void,
-  ) {}
-
-  async initialize(): Promise<void> {
-    if (this.recording) {
-      return;
+  async toggleEngine() {
+    if (this.recordStatus === "idle") {
+      await this.startRecording();
+    } else {
+      await this.stopRecording();
     }
+  }
 
+  private async startRecording() {
     try {
+      // 1. 启动录屏
       await ScreenRecorder.startRecording();
-      this.recording = true;
+      this.recordStatus = "recording";
+      useCollectorStore.getState().startRecord();
+
+      // 2. 显示悬浮窗
+      this.menuController?.showMenu();
+
+      // 3. 提示用户打开好友列表页
+      this.onProgress("准备就绪");
     } catch (error) {
       console.error("启动录屏失败:", error);
-      throw new Error(`启动录屏失败: ${error}`);
     }
   }
 
-  async start(): Promise<void> {
-    if (!this.recording) {
-      this.onProgress("请先初始化录屏");
-      throw new Error("请先初始化录屏");
-    }
-
-    this.collecting = true;
-
+  private async stopRecording() {
     try {
-      while (this.collecting) {
-        // 1. 尝试采集当前好友
-        this.onProgress("正在采集好友能量...");
-        await sleep(this.config.operationDelay);
-        const collectSuccess = await this.tryCollectEnergy();
-        if (collectSuccess) {
-          this.statistics.successCount++;
-        }
+      // 1. 停止录屏
+      await ScreenRecorder.stopRecording();
+      this.recordStatus = "idle";
+      useCollectorStore.getState().stopRecord();
 
-        // 检查是否停止采集
-        if (!this.collecting) {
-          break;
-        }
+      // 2. 隐藏悬浮窗
+      this.menuController?.hideMenu();
 
-        // 2. 查找下一个好友
-        this.onProgress("正在查找下一个好友...");
-        await sleep(this.config.operationDelay);
-        const hasNextFriend = await this.tryFindNextFriend();
-
-        if (hasNextFriend) {
-          this.statistics.totalCollected++;
-        } else {
-          // 没有更多好友，结束采集
-          this.onProgress("采集完成！");
-          break;
-        }
+      // 3. 停止采集 loop
+      if (this.checkCollectionIsRunning()) {
+        this.stop();
       }
     } catch (error) {
-      console.error("采集过程出错:", error);
-      this.onProgress(`采集出错: ${error}`);
-    } finally {
-      this.collecting = false;
-      // 停止录屏
-      await ScreenRecorder.stopRecording();
-      this.recording = false;
-      const report = this.generateReport();
-      this.onComplete(report);
+      console.error("停止录屏失败:", error);
     }
   }
 
-  stop(): void {
-    this.collecting = false;
+  private async start(): Promise<void> {
+    try {
+      this.collectionStatus = "collecting";
+      useCollectorStore.getState().startCollection();
+      await this.doLoop();
+    } catch (error) {
+      this.onProgress(`采集出错: ${error}`);
+    } finally {
+      this.collectionStatus = "idle";
+      useCollectorStore.getState().stoppedCollection();
+      this.onProgress("采集完成！");
+    }
+  }
+
+  private async doLoop() {
+    do {
+      // 1. 尝试采集当前好友
+      this.onProgress("3s 后尝试采集好友能量...");
+      await sleep(3000);
+      const collectSuccess = await this.tryCollectEnergy();
+      if (collectSuccess) {
+        this.onProgress("3s 后继续采集下一个好友");
+      } else {
+        this.onProgress("3s 后继续采集下一个好友");
+      }
+
+      // 检查是否停止采集
+      if (!this.checkCollectionIsRunning()) {
+        return;
+      }
+
+      // 2. 查找下一个好友
+      await sleep(3000);
+      const hasNextFriend = await this.tryFindNextFriend();
+      if (hasNextFriend) {
+        this.onProgress("成功找到下一个好友！");
+      } else {
+        this.onProgress("没有更多好友，结束采集！");
+        break;
+      }
+    } while (this.checkCollectionIsRunning());
+  }
+
+  private checkCollectionIsRunning(): boolean {
+    return this.collectionStatus == "collecting";
+  }
+
+  private stop(): void {
+    this.collectionStatus = "stopping";
+    useCollectorStore.getState().stoppingCollection();
     this.onProgress("正在停止采集...");
   }
 
@@ -117,43 +146,9 @@ export default class CollectionEngine {
     return false;
   }
 
-  private generateReport(): CollectionReport {
-    const startTime =
-      Date.now() -
-      this.statistics.totalCollected * this.config.operationDelay * 2;
-    const endTime = Date.now();
-    const duration = endTime - startTime;
-
-    return {
-      duration: this.formatDuration(duration),
-      totalFriends: this.statistics.totalCollected,
-      successRate: this.formatSuccessRate(),
-      averageTime: this.formatAverageTime(duration),
-      timestamp: new Date().toLocaleString("zh-CN"),
-    };
-  }
-
-  private formatDuration(ms: number): string {
-    const totalSeconds = Math.floor(ms / 1000);
-    const minutes = Math.floor(totalSeconds / 60);
-    const seconds = totalSeconds % 60;
-
-    if (minutes > 0) {
-      return `${minutes}分${seconds}秒`;
-    }
-    return `${seconds}秒`;
-  }
-
-  private formatSuccessRate(): string {
-    if (this.statistics.totalCollected === 0) return "0.0%";
-    const rate =
-      (this.statistics.successCount / this.statistics.totalCollected) * 100;
-    return `${rate.toFixed(1)}%`;
-  }
-
-  private formatAverageTime(totalDuration: number): string {
-    if (this.statistics.totalCollected === 0) return "0.0秒";
-    const avgMs = totalDuration / this.statistics.totalCollected;
-    return `${(avgMs / 1000).toFixed(1)}秒`;
+  private onProgress(status: string): void {
+    this.menuController?.updateMenuItems(status);
   }
 }
+
+export const collectionEngine = new CollectionEngine();

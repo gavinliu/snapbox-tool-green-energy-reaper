@@ -1,20 +1,5 @@
-export type CollectionStatus = 'idle' | 'collecting' | 'finished' | 'error';
-
-export interface CollectionStatistics {
-  totalCollected: number;
-  successCount: number;
-  failCount: number;
-  startTime: number | null;
-  endTime: number | null;
-}
-
-export interface CollectionReport {
-  duration: string;
-  totalFriends: number;
-  successRate: string;
-  averageTime: string;
-  timestamp: string;
-}
+export type RecordStatus = "idle" | "recording";
+export type CollectionStatus = "idle" | "collecting" | "stopping";
 
 export interface CollectionConfig {
   collectButtonTemplate: string;
@@ -24,18 +9,17 @@ export interface CollectionConfig {
 }
 
 export interface CollectorState {
-  isCollecting: boolean;
-  currentStatus: CollectionStatus;
-  statistics: CollectionStatistics;
-  currentOperation: string | null;
+  recordStatus: RecordStatus;
+  collectionStatus: CollectionStatus;
 }
 
 export interface CollectorActions {
   startCollection: () => void;
-  stopCollection: () => void;
-  updateStatistics: (data: Partial<CollectionStatistics>) => void;
-  setCurrentOperation: (operation: string | null) => void;
-  resetStatistics: () => void;
+  stoppingCollection: () => void;
+  stoppedCollection: () => void;
+
+  startRecord: () => void;
+  stopRecord: () => void;
 }
 
 export type CollectorStore = CollectorState & CollectorActions;
