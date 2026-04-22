@@ -1990,6 +1990,11 @@
   resolved "https://registry.yarnpkg.com/@snapbox/pkg-screen-recorder/-/pkg-screen-recorder-1.0.2.tgz#7408cfc4e1000b37d465da84f09d62e1fcb94d57"
   integrity sha512-AKGysfXRKJkk0AXGzj120NuxWp+3ajko7HD0wjdhHGFQHOnHaQ237Pd8+IDLbmaxu2pKRKjSH5sqibqcGJXdCg==
 
+"@snapbox/pkg-timer@^1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@snapbox/pkg-timer/-/pkg-timer-1.0.0.tgz#ae95f9de576017ef22be720fdc8bd9548b038364"
+  integrity sha512-WrJTuCbA0I59UuCp3beQdZcMbY2s2OaVZvudU80CGQ94XW9KGHEXxQMK9RxDtIrZN2OIeGu0RwfGqXBJOkCt8A==
+
 "@snapbox/pkg-ui@1.0.1":
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/@snapbox/pkg-ui/-/pkg-ui-1.0.1.tgz#e7010386c4b9e35db2498be5aa3266ac7d22f559"

@@ -14,6 +14,7 @@
     "@snapbox/pkg-floating-menu": "1.0.3",
     "@snapbox/pkg-screen-clicker": "1.0.1",
     "@snapbox/pkg-screen-recorder": "1.0.2",
+    "@snapbox/pkg-timer": "^1.0.0",
     "@snapbox/pkg-ui": "1.0.1",
     "expo": "^55.0.15",
     "expo-document-picker": "~55.0.13",

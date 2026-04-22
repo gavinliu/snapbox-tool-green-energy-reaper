@@ -1,7 +1,7 @@
 import * as ScreenClicker from "@snapbox/pkg-screen-clicker";
 import * as ScreenRecorder from "@snapbox/pkg-screen-recorder";
 import type { CollectionConfig, CollectionReport } from "../types";
-import { delay } from "../utils/delay";
+import { sleep } from "@snapbox/pkg-timer";
 import TemplateMatcher from "./TemplateMatcher";
 
 export default class CollectionEngine {
@@ -70,7 +70,7 @@ export default class CollectionEngine {
         }
 
         // 等待3秒
-        await delay(this.config.operationDelay);
+        await sleep(this.config.operationDelay);
 
         // 2. 查找下一个好友
         this.onProgress("正在查找下一个好友...");
@@ -78,7 +78,7 @@ export default class CollectionEngine {
 
         if (hasNextFriend) {
           this.statistics.totalCollected++;
-          await delay(this.config.operationDelay);
+          await sleep(this.config.operationDelay);
         } else {
           // 没有更多好友，结束采集
           this.onProgress("采集完成！");
