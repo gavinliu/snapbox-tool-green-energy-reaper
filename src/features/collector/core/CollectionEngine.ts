@@ -82,14 +82,9 @@ class CollectionEngine {
   private async doLoop() {
     do {
       // 1. 尝试采集当前好友
-      this.onProgress("3s 后尝试采集好友能量...");
+      this.onProgress("3s 后采集好友能量");
       await sleep(3000);
-      const collectSuccess = await this.tryCollectEnergy();
-      if (collectSuccess) {
-        this.onProgress("3s 后继续采集下一个好友");
-      } else {
-        this.onProgress("3s 后继续采集下一个好友");
-      }
+      await this.tryCollectEnergy();
 
       // 检查是否停止采集
       if (!this.checkCollectionIsRunning()) {
@@ -97,11 +92,10 @@ class CollectionEngine {
       }
 
       // 2. 查找下一个好友
+      this.onProgress("3s 后查找下一个好友");
       await sleep(3000);
       const hasNextFriend = await this.tryFindNextFriend();
-      if (hasNextFriend) {
-        this.onProgress("成功找到下一个好友！");
-      } else {
+      if (!hasNextFriend) {
         this.onProgress("没有更多好友，结束采集！");
         break;
       }
