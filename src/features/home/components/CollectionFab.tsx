@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { FAB, useSafeAreaInsets } from 'react-native-paper';
+import { FAB } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { useConfigStore } from '../../config/store/useConfigStore';
 import { useCollectorStore } from '../../collector/store/useCollectorStore';
