@@ -9,7 +9,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export function CollectionFab() {
   const insets = useSafeAreaInsets();
-  const isRecording = useCollectorStore.getState().recordStatus === "recording";
+  const isRecording = useCollectorStore(
+    (state) => state.recordStatus === "recording",
+  );
 
   const handlePress = async () => {
     try {

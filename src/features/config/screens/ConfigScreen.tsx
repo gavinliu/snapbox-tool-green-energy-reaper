@@ -73,8 +73,10 @@ export function ConfigScreen() {
       return;
     }
 
-    useConfigStore.getState().setCollectButtonTemplate(collectTemplate);
-    useConfigStore.getState().setFindEnergyButtonTemplate(findEnergyTemplate);
+    useConfigStore.setState({
+      collectButtonTemplate: collectTemplate,
+      findEnergyButtonTemplate: findEnergyTemplate,
+    });
 
     showSuccessToast("配置已保存");
     router.back();
