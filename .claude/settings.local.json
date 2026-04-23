@@ -5,7 +5,8 @@
       "Bash(git commit:*)",
       "Bash(yarn test:*)",
       "Bash(yarn add:*)",
-      "Bash(yarn start:*)"
+      "Bash(yarn start:*)",
+      "Bash(yarn tsc:*)"
     ]
   }
 }

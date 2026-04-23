@@ -18,12 +18,8 @@ type ScreenRecorderStop = {
 class CollectionEngine {
   private menuController: FloatingMenuController | null = null;
   private matcher: TemplateMatcher = new TemplateMatcher();
-  private recordStatus: RecordStatus = "idle";
-  private collectionStatus: CollectionStatus = "idle";
 
   constructor() {
-    this.recordStatus = "idle";
-    this.collectionStatus = "idle";
     this.menuController = new FloatingMenuController(
       () => this.start(), // 开始采集 loop
       () => this.stop(), // 停止采集 loop
@@ -32,7 +28,9 @@ class CollectionEngine {
   }
 
   async toggleEngine() {
-    if (this.recordStatus === "idle") {
+    const recordStatus = useCollectorStore.getState().recordStatus;
+
+    if (recordStatus === "idle") {
       await this.startRecording();
     } else {
       await this.stopRecording();
@@ -68,7 +66,6 @@ class CollectionEngine {
     }
 
     // 更新状态为空闲
-    this.recordStatus = "idle";
     useCollectorStore.getState().stopRecord();
 
     // 隐藏悬浮窗
@@ -90,7 +87,6 @@ class CollectionEngine {
     try {
       // 1. 启动录屏
       await ScreenRecorder.startRecording();
-      this.recordStatus = "recording";
       useCollectorStore.getState().startRecord();
 
       // 2. 显示悬浮窗
@@ -100,7 +96,7 @@ class CollectionEngine {
       this.onProgress("准备就绪");
     } catch (error) {
       console.error("启动录屏失败:", error);
-      this.recordStatus = "idle";
+      useCollectorStore.getState().stopRecord();
       this.onProgress("启动录屏失败，请重试");
     }
   }
@@ -109,7 +105,6 @@ class CollectionEngine {
     try {
       // 1. 停止录屏
       await ScreenRecorder.stopRecording();
-      this.recordStatus = "idle";
       useCollectorStore.getState().stopRecord();
 
       // 2. 隐藏悬浮窗
@@ -122,7 +117,6 @@ class CollectionEngine {
     } catch (error) {
       console.error("停止录屏失败:", error);
       // 即使停止录屏失败，也要确保状态正确
-      this.recordStatus = "idle";
       useCollectorStore.getState().stopRecord();
       this.menuController?.hideMenu();
       this.onProgress("停止录屏时出现错误");
@@ -131,13 +125,11 @@ class CollectionEngine {
 
   private async start(): Promise<void> {
     try {
-      this.collectionStatus = "collecting";
       useCollectorStore.getState().startCollection();
       await this.doLoop();
     } catch (error) {
       this.onProgress(`采集出错: ${error}`);
     } finally {
-      this.collectionStatus = "idle";
       useCollectorStore.getState().stoppedCollection();
       this.onProgress("采集完成！");
     }
@@ -181,11 +173,11 @@ class CollectionEngine {
   }
 
   private checkCollectionIsRunning(): boolean {
-    return this.collectionStatus == "collecting";
+    const collectionStatus = useCollectorStore.getState().collectionStatus;
+    return collectionStatus === "collecting";
   }
 
   private stop(): void {
-    this.collectionStatus = "stopping";
     useCollectorStore.getState().stoppingCollection();
     this.onProgress("正在停止采集...");
   }
