@@ -3,7 +3,6 @@ import ScreenRecorderModule, * as ScreenRecorder from "@snapbox/pkg-screen-recor
 import { sleep } from "@snapbox/pkg-timer";
 import { FloatingMenuController } from "../components/FloatingMenuController";
 import { useCollectorStore } from "../store/useCollectorStore";
-import type { CollectionStatus, RecordStatus } from "../types";
 import TemplateMatcher from "./TemplateMatcher";
 
 type ScreenRecorderError = {
@@ -43,10 +42,6 @@ class CollectionEngine {
       (error: ScreenRecorderError) => {
         console.error("ScreenRecorder 错误:", error);
         this.handleScreenRecorderStopOrErrorEvent();
-
-        // 显示友好的错误提示
-        const errorMessage = this.getErrorMessage(error.code, error.message);
-        this.onProgress(`录屏异常: ${errorMessage}`);
       },
     );
 
@@ -72,17 +67,6 @@ class CollectionEngine {
     this.menuController?.hideMenu();
   }
 
-  private getErrorMessage(code: string, message: string): string {
-    const errorMessages: Record<string, string> = {
-      PERMISSION_DENIED: "录屏权限被拒绝",
-      RECORDING_LIMIT_REACHED: "达到录屏时长限制",
-      SYSTEM_ERROR: "系统错误",
-      UNKNOWN: "未知错误",
-    };
-
-    return errorMessages[code] || message || "未知错误";
-  }
-
   private async startRecording() {
     try {
       // 1. 启动录屏
@@ -97,7 +81,7 @@ class CollectionEngine {
     } catch (error) {
       console.error("启动录屏失败:", error);
       useCollectorStore.getState().stopRecord();
-      this.onProgress("启动录屏失败，请重试");
+      this.menuController?.hideMenu();
     }
   }
 
@@ -119,7 +103,6 @@ class CollectionEngine {
       // 即使停止录屏失败，也要确保状态正确
       useCollectorStore.getState().stopRecord();
       this.menuController?.hideMenu();
-      this.onProgress("停止录屏时出现错误");
     }
   }
 
