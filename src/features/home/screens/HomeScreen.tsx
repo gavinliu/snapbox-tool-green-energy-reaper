@@ -1,5 +1,5 @@
+import * as Automation from "@snapbox/pkg-automation";
 import * as FloatingMenu from "@snapbox/pkg-floating-menu";
-import * as ScreenClicker from "@snapbox/pkg-screen-clicker";
 import { useRouter } from "expo-router";
 import { StyleSheet, View } from "react-native";
 import { Avatar, Button, Card, Text } from "react-native-paper";
@@ -15,8 +15,8 @@ export function HomeScreen() {
 
   const [overlayStatus, requestOverlayPermission] =
     FloatingMenu.useOverlayPermissions();
-  const [screenClickerStatus, requestScreenClickerPermission] =
-    ScreenClicker.useScreenClickerPermissions();
+  const [automationStatus, requestAutomationPermission] =
+    Automation.useAutomationPermissions();
 
   return (
     <View style={styles.root}>
@@ -48,14 +48,14 @@ export function HomeScreen() {
 
         <Card mode="contained">
           <Card.Title
-            title="屏幕点击权限"
-            subtitle="通过屏幕点击器，自动采集绿色能量"
+            title="自动化权限"
+            subtitle="通过自动化，自动采集绿色能量"
             left={(props) => (
               <Avatar.Icon {...props} icon="cursor-default-click" />
             )}
           />
           <Card.Content style={styles.cardContent}>
-            {screenClickerStatus?.granted ? (
+            {automationStatus?.granted ? (
               <Button icon="check" mode="text" onPress={() => {}}>
                 已授权
               </Button>
@@ -63,7 +63,7 @@ export function HomeScreen() {
               <Button
                 icon="play"
                 mode="contained"
-                onPress={requestScreenClickerPermission}
+                onPress={requestAutomationPermission}
               >
                 授权
               </Button>
@@ -73,7 +73,7 @@ export function HomeScreen() {
 
         <Card mode="contained">
           <Card.Title
-            title="配置"
+            title="模板匹配"
             subtitle={"通过模板匹配图，在屏幕中查找点击位置"}
             left={(props) => <Avatar.Icon {...props} icon={"cog"} />}
           />
@@ -105,8 +105,9 @@ export function HomeScreen() {
           <Card.Content>
             <Text>1. 完成上面的权限授权和配置</Text>
             <Text>2. 点击采集按钮</Text>
-            <Text style={{ marginLeft: 16 }}>2.1. 显示悬浮菜单</Text>
-            <Text style={{ marginLeft: 16 }}>2.2. 打开蚂蚁森林好友列表页</Text>
+            <Text style={{ marginLeft: 16 }}>2.1. 请求授权录屏</Text>
+            <Text style={{ marginLeft: 16 }}>2.2. 自动显示悬浮菜单</Text>
+            <Text style={{ marginLeft: 16 }}>2.3. 自动打开蚂蚁森林</Text>
             <Text>3. 点击悬浮菜单上的采集按钮，启动自动采集</Text>
             <Text>4. 采集过程中切勿操作手机</Text>
           </Card.Content>

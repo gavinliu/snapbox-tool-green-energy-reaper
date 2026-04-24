@@ -1,6 +1,7 @@
-import * as ScreenClicker from "@snapbox/pkg-screen-clicker";
+import * as Automation from "@snapbox/pkg-automation";
 import ScreenRecorderModule, * as ScreenRecorder from "@snapbox/pkg-screen-recorder";
 import { sleep } from "@snapbox/pkg-timer";
+import { startActivityAsync } from "expo-intent-launcher";
 import { FloatingMenuController } from "../components/FloatingMenuController";
 import { useCollectorStore } from "../store/useCollectorStore";
 import TemplateMatcher from "./TemplateMatcher";
@@ -76,8 +77,10 @@ class CollectionEngine {
       // 2. 显示悬浮窗
       this.menuController?.showMenu();
 
-      // 3. 提示用户打开好友列表页
-      this.onProgress("准备就绪");
+      // 3. 打开支付宝列表页
+      startActivityAsync("android.intent.action.VIEW", {
+        data: "alipays://platformapi/startapp?appId=60000002",
+      });
     } catch (error) {
       console.error("启动录屏失败:", error);
       useCollectorStore.getState().stopRecord();
@@ -173,7 +176,7 @@ class CollectionEngine {
       if (result) {
         const centerX = result.x + result.width / 2;
         const centerY = result.y + result.height / 2;
-        await ScreenClicker.tap(centerX, centerY);
+        await Automation.tap(centerX, centerY);
         return true;
       }
 
@@ -193,7 +196,7 @@ class CollectionEngine {
       if (result) {
         const centerX = result.x + result.width / 2;
         const centerY = result.y + result.height / 2;
-        await ScreenClicker.tap(centerX, centerY);
+        await Automation.tap(centerX, centerY);
         return true;
       }
 
