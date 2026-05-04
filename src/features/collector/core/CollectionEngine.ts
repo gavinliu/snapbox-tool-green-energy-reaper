@@ -1,19 +1,15 @@
 import * as Automation from "@snapbox/pkg-automation";
-import ScreenRecorderModule, * as ScreenRecorder from "@snapbox/pkg-screen-recorder";
+import {
+  captureScreen,
+  startRecording,
+  stopRecording,
+  useScreenRecorderListener,
+} from "@snapbox/pkg-screen-recorder";
 import { sleep } from "@snapbox/pkg-timer";
 import { startActivityAsync } from "expo-intent-launcher";
 import { FloatingMenuController } from "../components/FloatingMenuController";
 import { useCollectorStore } from "../store/useCollectorStore";
 import TemplateMatcher from "./TemplateMatcher";
-
-type ScreenRecorderError = {
-  code: string;
-  message: string;
-};
-
-type ScreenRecorderStop = {
-  filePath: string;
-};
 
 class CollectionEngine {
   private menuController: FloatingMenuController | null = null;
@@ -38,21 +34,16 @@ class CollectionEngine {
   }
 
   private setupScreenRecorderListeners() {
-    ScreenRecorderModule.addListener(
-      "onError",
-      (error: ScreenRecorderError) => {
+    useScreenRecorderListener({
+      onError: (error) => {
         console.error("ScreenRecorder 错误:", error);
         this.handleScreenRecorderStopOrErrorEvent();
       },
-    );
-
-    ScreenRecorderModule.addListener(
-      "onStop",
-      (payload: ScreenRecorderStop) => {
+      onStop: (payload) => {
         console.log("ScreenRecorder 已停止:", payload.filePath);
         this.handleScreenRecorderStopOrErrorEvent();
       },
-    );
+    });
   }
 
   private handleScreenRecorderStopOrErrorEvent() {
@@ -71,7 +62,7 @@ class CollectionEngine {
   private async startRecording() {
     try {
       // 1. 启动录屏
-      await ScreenRecorder.startRecording();
+      await startRecording();
       useCollectorStore.getState().startRecord();
 
       // 2. 显示悬浮窗
@@ -91,7 +82,7 @@ class CollectionEngine {
   private async stopRecording() {
     try {
       // 1. 停止录屏
-      await ScreenRecorder.stopRecording();
+      await stopRecording();
       useCollectorStore.getState().stopRecord();
 
       // 2. 隐藏悬浮窗
@@ -170,7 +161,7 @@ class CollectionEngine {
 
   private async tryCollectEnergy(): Promise<boolean> {
     try {
-      const screenPath = await ScreenRecorder.captureScreen();
+      const screenPath = await captureScreen();
       const result = await this.matcher.findCollectButton(screenPath);
 
       if (result) {
@@ -190,7 +181,7 @@ class CollectionEngine {
 
   private async tryFindNextFriend(): Promise<boolean> {
     try {
-      const screenPath = await ScreenRecorder.captureScreen();
+      const screenPath = await captureScreen();
       const result = await this.matcher.findFindEnergyButton(screenPath);
 
       if (result) {
